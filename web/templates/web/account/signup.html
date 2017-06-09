@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html>
+{% load web_tags %}
+<head>
+    <title>
+        {% get_settings "APP_NAME" %} - Signup
+    </title>
+    <link href="/static/common/css/google.fonts.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/se7en/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/se7en/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/se7en/stylesheets/se7en-font.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/se7en/stylesheets/style.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ace/assets/css/jquery.gritter.css" rel="stylesheet"/>
+    <script src="/static/se7en/javascripts/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery-ui.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/raphael.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.mousewheel.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.vmap.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.vmap.sampledata.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.vmap.world.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.bootstrap.wizard.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/fullcalendar.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/gcal.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/datatable-editable.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.easy-pie-chart.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/excanvas.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.isotope.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/masonry.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/modernizr.custom.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.fancybox.pack.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/select2.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/styleswitcher.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/wysiwyg.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.inputmask.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.validate.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/bootstrap-fileupload.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/bootstrap-timepicker.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/bootstrap-colorpicker.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/bootstrap-switch.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/daterange-picker.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/date.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/morris.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/skycons.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/jquery.sparkline.min.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/fitvids.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/main.js" type="text/javascript"></script>
+    <script src="/static/se7en/javascripts/respond.js" type="text/javascript"></script>
+    <script src="/static/ace/assets/js/jquery.gritter.min.js"></script>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+
+    <script type="text/javascript">
+        function check_username() {
+            var form = document.forms["signup-form"];
+            var username = form.username;
+            var success = false;
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "{% url 'web:check_duplicate' %}",
+                dataType: "html",
+                data: "username=" + $("#id_username").val(),
+                success: function (msg) {
+                    if (msg == 'true') {
+                        username.setCustomValidity("Duplicate username.");
+                    } else {
+                        username.setCustomValidity("");
+                        success = true;
+                    }
+                },
+                error: function () {
+                }
+            });
+            return success;
+        }
+        function check_passwords() {
+            var form = document.forms["signup-form"];
+            var p1 = form.password;
+            var p2 = form.re_password;
+            if (p1.value != p2.value) {
+                p2.oninvalid();
+                return false;
+            }
+            return true;
+        }
+
+        function check_email() {
+            var form = document.forms["signup-form"];
+            var email = form.email;
+            var success = false;
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "{% url 'web:check_duplicate' %}",
+                dataType: "html",
+                data: "email=" + $("#id_email").val(),
+                success: function (msg) {
+                    if (msg == 'true') {
+                        email.setCustomValidity("The email address has been used.");
+                    } else {
+                        email.setCustomValidity("");
+                        success = true;
+                    }
+                },
+                error: function () {
+                }
+            });
+            return success;
+        }
+
+        function check() {
+            return check_username() && check_passwords() && check_email();
+        }
+
+        onload = function () {
+            var p2 = document.forms["signup-form"].re_password;
+            p2.oninvalid = function () {
+                this.setCustomValidity("Passwords does not match.");
+            }
+            p2.oninput = function () {
+                this.setCustomValidity("");
+            }
+
+            {% if form.errors %}
+                $.gritter.add({
+                    title: 'Notification',
+                    text: '{{ form.errors}}',
+                    class_name: 'gritter-error'
+                });
+            {% endif %}
+        }
+    </script>
+</head>
+<body class="login1 signup">
+<!-- Login Screen -->
+<div class="login-wrapper">
+    <div class="login-container">
+        <a href="#"><img width="250" height="75" src="/static/se7en/images/logo-login%402x.png"/></a>
+        <form action="." method="post" id="signup-form" onsubmit="return check();">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                {{ form.password }}
+            </div>
+            <div class="form-group">
+                {{ form.re_password }}
+            </div>
+            <div class="form-group">
+                {{ form.email }}
+                <input type="submit" value="&#xf054;">
+            </div>
+            <div class="form-options">
+
+            </div>
+        </form>
+        <p class="signup">
+            Already have an account? <a href="{% url 'web:login' %}">Log in now</a>
+        </p>
+    </div>
+</div>
+<!-- End Login Screen -->
+</body>
+</html>

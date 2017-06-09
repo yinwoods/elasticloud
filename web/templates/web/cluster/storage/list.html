@@ -1,0 +1,139 @@
+{% extends "web/base/base.html" %}
+{% block page-header %}Storage{% endblock %}
+{% block page-header-1 %}List{% endblock %}
+{% block page_css %}
+    <link href="/static/ace/assets/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
+{% endblock %}
+{% block page-content %}
+    {% load web_tags %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h3 class="header smaller lighter blue">Storage Table</h3>
+
+            <div class="table-responsive">
+                <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>Master</th>
+                        <th>Size</th>
+                        <th>M-Memory</th>
+                        <th>S-Memory</th>
+                        <th>Type</th>
+                        <th>Create Date</th>
+                        <th>Operation</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for line in lines %}
+                        <tr>
+                            <td>
+                                {% if line.type == 'HDFS' %}
+                                    <a href="http://{{ line.m_ip }}:50070/" target="_blank">{{ line.m_ip }}</a>
+                                {% elif line.type == 'HBASE' %}
+                                    <a href="http://{{ line.m_ip }}:60010/" target="_blank">{{ line.m_ip }}</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ line.size }}
+                            </td>
+                            <td>
+                                {{ line.m_mem }}
+                            </td>
+                            <td>
+                                {{ line.s_mem }}
+                            </td>
+                            <td>
+                                {{ line.type }}
+                            </td>
+                            <td>
+                                {{ line.date }}
+                            </td>
+
+
+                            <td>
+                                <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                    <a class="red" href="#" onclick="del('{{ line.m_ip }}');">
+                                        <i class="icon-trash bigger-130"></i>
+                                    </a>
+                                </div>
+
+                                <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                    <div class="inline position-relative">
+                                        <button class="btn btn-minier btn-yellow dropdown-toggle"
+                                                data-toggle="dropdown">
+                                            <i class="icon-caret-down icon-only bigger-120"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                            <li>
+                                                <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+																				<span class="blue">
+																					<i class="icon-zoom-in bigger-120"></i>
+																				</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+																				<span class="green">
+																					<i class="icon-edit bigger-120"></i>
+																				</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+																				<span class="red">
+																					<i class="icon-trash bigger-120"></i>
+																				</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block page_js %}
+    <script src="/static/ace/assets/js/jquery.dataTables.min.js"></script>
+    <script src="/static/ace/assets/js/dataTables.bootstrap.min.js"></script>
+    <script src="/static/common/js/mask.js"></script>
+{% endblock %}
+{% block inline_script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sample-table-2').DataTable();
+        });
+
+        function del(m_ip) {
+            if (confirm("确认删除:" + m_ip + " ?")) {
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'web:cluster_storage_delete' %}",
+                    data: "m_ip=" + m_ip,
+                    success: function (msg) {
+                        if (msg == 'true') {
+                            alert("Success!")
+                            window.location.reload();
+                        } else {
+                            alert("Failed!")
+                        }
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        }
+
+    </script>
+{% endblock %}

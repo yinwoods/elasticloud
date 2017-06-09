@@ -1,0 +1,94 @@
+{% extends "web/base/base.html" %}
+{% block page-header %}Storage{% endblock %}
+{% block page-header-1 %}Create{% endblock %}
+{% block page_css %}
+    <link rel="stylesheet" href="/static/ace/assets/css/jquery.gritter.css"/>
+{% endblock %}
+{% block page-content %}
+    <form class="form-horizontal" role="form" method="post" action="." enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-sm-3 control-label no-padding-right" for="form-field-2">Type</label>
+            <div class="col-sm-9">
+                <select class="form-control" style="width: 41.6666%" id="priority" name="type">
+                    <option value="1" selected >HDFS</option>
+                    <option value="2" selected >HBase</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label no-padding-right" for="form-field-2">Size</label>
+            <div class="col-sm-9">
+                <select class="form-control" style="width: 41.6666%" id="priority" name="size">
+                    <option value="2" >Small</option>
+                    <option value="3" selected >Normal</option>
+                    <option value="4" >Big</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label no-padding-right" for="form-field-2">NameNode Memory</label>
+            <div class="col-sm-9">
+                <select class="form-control" style="width: 41.6666%" id="priority" name="m_memory">
+                    <option value="256m" >256M</option>
+                    <option value="512m" selected >512M</option>
+                    <option value="1024m" >1024M</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label no-padding-right" for="form-field-2">DataNode Memory</label>
+            <div class="col-sm-9">
+                <select class="form-control" style="width: 41.6666%" id="priority" name="s_memory">
+                    <option value="256m" selected >256M</option>
+                    <option value="512m" >512M</option>
+                    <option value="1024m" >1024M</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="clearfix form-actions">
+            <div class="col-md-offset-3 col-md-9" style="margin-left: 35%">
+                <button class="btn btn-info" type="submit">
+                    <i class="icon-ok bigger-110"></i>
+                    Submit
+                </button>
+
+                &nbsp; &nbsp; &nbsp;
+                <button class="btn" type="reset">
+                    <i class="icon-undo bigger-110"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block page_js %}
+    <script src="/static/ace/assets/js/jquery.gritter.min.js"></script>
+{% endblock %}
+{% block inline_script %}
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('#id-input-file-1 , #id-input-file-2').ace_file_input({
+                no_file: 'No File ...',
+                btn_choose: 'Choose',
+                btn_change: 'Change',
+                droppable: false,
+                onchange: null,
+                thumbnail: false //| true | large
+                //whitelist:'gif|png|jpg|jpeg'
+                //blacklist:'exe|php'
+                //onchange:''
+                //
+            });
+            {% if message %}
+                $.gritter.add({
+                    title: 'Notification',
+                    text: '{{ message }}',
+                    class_name: 'gritter-info gritter-light'
+                });
+            {% endif %}
+        });
+    </script>
+{% endblock %}
