@@ -75,7 +75,7 @@
                             <td>{{ line.slave_memory }}</td>
                             <td>{{ line.storage_type }}</td>
                             <td>{{ line.date }}</td>
-                            <td><a href=""><i class="fa fa-trash-o red fa-lg"></i></a></td>
+                            <td><a href="#", onclick="delete_storage('{{ line.master_ip }}');"><i class="fa fa-trash-o red fa-lg"></i></a></td>
                           </tr>
                         {% endfor %}
                       </tbody>
@@ -86,4 +86,27 @@
             </div>
           </div>
         </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function delete_storage(master_ip) {
+    if(confirm("确认删除：" + master_ip + "？")) {
+        $.ajax({
+            type: 'GET',
+            url: '/web/cluster/storage/delete/',
+            data: "master_ip=" + master_ip,
+            success: function(msg) {
+                if(msg == 'true'){
+                    alert('success!');
+                    window.location.reload();
+                } else {
+                    alert("failed!");
+                }
+            },
+            error: function() {}
+        });
+    }
+}
+</script>
 {% endblock %}

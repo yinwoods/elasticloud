@@ -113,12 +113,12 @@ def list(request):
 def delete(request):
     if request.method == 'GET':
         try:
-            m_ip = request.GET.get('m_ip')
-            recs = Record.objects.filter(m_ip=m_ip)
+            master_ip = request.GET.get('master_ip')
+            recs = Record.objects.filter(master_ip=master_ip)
             for rec in recs:
-                boot_strap.kill_container_by_id(rec.c_id)
+                boot_strap.kill_container_by_id(rec.container_id)
                 rec.delete()
-            storage = Storage.objects.filter(m_ip=m_ip)
+            storage = Storage.objects.filter(master_ip=master_ip)
             for sto in storage:
                 sto.delete()
             return HttpResponse("true")
