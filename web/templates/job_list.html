@@ -61,11 +61,11 @@
                         {% for line in lines %}
                         <tr>
                           <th scope="row">{{ forloop.counter }}</th>
-                          <td>{{ line.name }}</td>
-                          <td>{{ line.desc }}</td>
-                          <td>{{ line.priority  }}</td>
+                          <td>{{ line.job_name }}</td>
+                          <td>{{ line.job_desc }}</td>
+                          <td>{{ line.job_priority  }}</td>
                           <td>{{ line.submit_time }}</td>
-                          <td><span class="o">{{ line.stat }}</span></td>
+                          <td><span class="o">{{ line.job_stat }}</span></td>
                           <td>
                             <a href=""><i class="fa fa-cloud-upload blue fa-lg"></i></a>
                             <span> &#8203; &#8203; </span>

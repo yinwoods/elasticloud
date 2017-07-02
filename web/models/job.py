@@ -11,7 +11,7 @@ class Job(models.Model):
     job_file = models.CharField(max_length=1000)
     job_priority = models.IntegerField(default=2)
     job_stat = models.CharField(max_length=30, default='Ready')
-    job_submit_time = models.DateTimeField(auto_now_add=True)
+    submit_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         app_label = 'web'
