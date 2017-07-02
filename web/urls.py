@@ -28,26 +28,37 @@ urlpatterns = [
     url(r'^$', index.index, name='index'),
     url(r'^index/$', index.index, name='index'),
 
+
     # Account
     url(r'^account/login/$', account.login, name='login'),
-    url(r'^account/signup/$', account.signup, name='signup'),
+    url(r'^account/register/$', account.register, name='register'),
     url(r'^account/logout/$', account.logout, name='logout'),
     url(r'^account/forgot/$', account.forgot, name='forgot'),
-    url(r'^account/check_duplicate/$', account.check_duplicate, name='check_duplicate'),
+    url(r'^account/check_duplicate/$', account.check_duplicate,
+        name='check_duplicate'),
+    url(r'^profile$', account.profile, name='profile'),
+
 
     # Job
     url(r'^job/list/$', job.list, name='job_list'),
-    url(r'^job/execute/$', job.execute, name='job_execute'),
-    url(r'^job/execute/delete$', job.execute_delete, name='job_execute_delete'),
+    url(r'^job/execute/$', job.execute, name='job_execute^'),
+    url(r'^job/execute/delete$', job.execute_delete,
+        name='job_execute_delete'),
+
     url(r'^job/submit/$', job.submit, name='job_submit'),
     url(r'^job/launch/$', job.launch, name='job_launch'),
     url(r'^job/delete/$', job.delete, name='job_delete'),
 
+
     # Cluster
     url(r'^cluster/compute/list/$', compute.list, name='cluster_compute_list'),
-    url(r'^cluster/compute/delete/$', compute.delete, name='cluster_compute_delete'),
-    url(r'^cluster/storage/create/$', storage.create, name='cluster_storage_create'),
+    url(r'^cluster/compute/delete/$', compute.delete,
+        name='cluster_compute_delete'),
+    url(r'^cluster/storage/create/$', storage.create,
+        name='cluster_storage_create'),
     url(r'^cluster/storage/list/$', storage.list, name='cluster_storage_list'),
-    url(r'^cluster/storage/delete/$', storage.delete, name='cluster_storage_delete'),
+    url(r'^cluster/storage/delete/$', storage.delete,
+        name='cluster_storage_delete'),
+
 
 ]

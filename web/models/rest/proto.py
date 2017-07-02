@@ -11,4 +11,5 @@ class JsonResponse:
         self.data['data'] = data
 
     def toJSON(self):
-        return HttpResponse(json.dumps(self.data, ensure_ascii=False), content_type="application/json")
+        return HttpResponse(json.dumps(self.data, ensure_ascii=False),
+                            content_type="application/json")

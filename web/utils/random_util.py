@@ -1,5 +1,6 @@
 # coding:utf-8
-import random, string
+import random
+import string
 
 
 def gen_str(length=8):
@@ -9,4 +10,4 @@ def gen_str(length=8):
 
 
 if __name__ == "__main__":
-    print gen_str(8)
+    print(gen_str(8))

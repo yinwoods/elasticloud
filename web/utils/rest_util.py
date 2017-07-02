@@ -1,8 +1,13 @@
-import httplib, urllib, pycurl, StringIO, logging
+import urllib
+import pycurl
+import requests
+# import StringIO
+import logging
 
 logger = logging.getLogger(__name__)
 
 
+'''
 def simple_post(url, params, headers=None):
     proto, rest = urllib.splittype(url)
     host, rest = urllib.splithost(rest)
@@ -16,11 +21,11 @@ def simple_post(url, params, headers=None):
         }
         if headers:
             headers = headers
-        http_client = httplib.HTTPConnection(host, port)
-        http_client.request("POST", rest, params, headers)
-        response = http_client.getresponse()
-        str_t = response.read()
-        return str_t
+        # http_client = httplib.HTTPConnection(host, port)
+        # http_client.request("POST", rest, params, headers)
+        # response = http_client.getresponse()
+        response = requests.post(rest, params, headers)
+        return response.text
     except Exception as e:
         logger.error(e)
         return e.message
@@ -41,6 +46,7 @@ def simple_get(url):
     c.setopt(c.WRITEFUNCTION, b.write)
     c.perform()
     return b.getvalue()
+'''
 
 
 def az_post(host, port, timeout, path, params, headers=None):
@@ -54,15 +60,16 @@ def az_post(host, port, timeout, path, params, headers=None):
                 "Content-type": "application/x-www-form-urlencoded",
                 "Accept": "text/plain"
             }
-        http_client = httplib.HTTPConnection(host, port, timeout=timeout)
+        # http_client = httplib.HTTPConnection(host, port, timeout=timeout)
         print('x' * 100)
         print('in az_post')
         print(host, port, timeout, path, params)
         print('x' * 100)
-        http_client.request("POST", path, params, headers)
-        response = http_client.getresponse()
-        str_t = response.read()
-        return str_t
+        # http_client.request("POST", path, params, headers)
+        # response = http_client.getresponse()
+        # str_t = response.read()
+        response = requests.post(path, params, headers)
+        return response.text
     except Exception as e:
         logger.error(e)
         return e

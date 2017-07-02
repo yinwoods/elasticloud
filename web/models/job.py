@@ -20,8 +20,8 @@ class Job(models.Model):
 class Execute(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    c_ip = models.CharField(max_length=50) # resourcemanager ip, compute
-    s_ip = models.CharField(max_length=50) # namenode ip, storage
+    computer_ip = models.CharField(max_length=50)  # resourcemanager ip, compute
+    storage_ip = models.CharField(max_length=50)  # namenode ip, storage
     execute_log = models.TextField()
     execute_time = models.DateTimeField(auto_now_add=True)
 

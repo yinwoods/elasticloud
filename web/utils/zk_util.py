@@ -1,9 +1,10 @@
 # coding:utf-8
 import logging
-import sys, json
+import sys
+import json
+import requests
 from kazoo.client import KazooClient
-from config_util import get_zk_hosts
-from rest_util import simple_get
+from web.utils.config_util import get_zk_hosts
 
 logging.basicConfig()
 zk = KazooClient(hosts=get_zk_hosts())
@@ -49,14 +50,14 @@ def get_min_cluster(user_id):
     for child in children:
         try:
             url = "http://" + child + ":8088/ws/v1/cluster/metrics"
-            result = simple_get(url)
+            result = requests.get(url)
             result = json.loads(result)
             active_nodes = int(result['clusterMetrics']['activeNodes'])
             if active_nodes < min_nodes:
                 min_nodes = active_nodes
                 min_ip = child
         except Exception as e:
-            print e
+            print(e)
     if min_ip != '':
         return {'ip': min_ip, 'nodes': min_nodes}
     else:
@@ -64,4 +65,4 @@ def get_min_cluster(user_id):
 
 
 if __name__ == "__main__":
-    print count("/EC_ROOT/test/COMPUTE")
+    print(count("/EC_ROOT/test/COMPUTE"))
