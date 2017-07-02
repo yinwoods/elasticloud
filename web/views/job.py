@@ -66,14 +66,10 @@ def launch(request):
     count = zk_util.count(
             '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')
     if count == 0:
-        print(count)
         return HttpResponse("No available HDFS resource.")
     hdfs_m_ip = zk_util.get_children(
             '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')[0]
     storage = Storage.objects.filter(m_ip=hdfs_m_ip)
-    print('-' * 50, 'in job launch', '-' * 50)
-    print(request.__dict__)
-    print('-' * 100)
     job = Job.objects.get(id=int(request.GET.get('id')))
     success = launch_job(job, storage[0], request.user.username)
     return HttpResponse(success)
@@ -88,6 +84,7 @@ def list(request):
 @login_required(login_url=LOGIN_URL)
 def execute(request):
     lines = Execute.objects.filter(user=request.user).order_by('-execute_time')
+    print(lines)
     return render(request, 'job_execute.html', {'lines': lines})
 
 

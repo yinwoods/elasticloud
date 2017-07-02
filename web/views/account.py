@@ -12,7 +12,7 @@ from web.forms import account
 from web.models.res import Quota
 from web.models.rest.proto import JsonResponse
 from web.utils import random_util, mail_sender
-# from web.utils import zk_util
+from web.utils import zk_util
 
 # Account management
 logger = logging.getLogger(__name__)
@@ -44,8 +44,15 @@ def check_duplicate(request):
 def register(request):
     if request.method == 'POST':
         signup_form = account.SignupForm(request.POST)
+        print('x' * 100)
+        print(signup_form)
+        print(signup_form.is_valid())
+        print('x' * 100)
         if signup_form.is_valid():
             signup_info = signup_form.cleaned_data
+            print('x' * 100)
+            print(signup_info['username'])
+            print('x' * 100)
             user = User.objects.create_user(
                 username=signup_info['username'],
                 email=signup_info['email'],
@@ -55,11 +62,11 @@ def register(request):
             # default memory limit
             quota = Quota(user=user, memory=4096)
             quota.save()
-            # zk_util.init_schema(user.username)
+            zk_util.init_schema(user.username)
             return HttpResponseRedirect(reverse('web:login'))
     else:
         signup_form = account.SignupForm()
-    return render(request, 'register.html', {'form': signup_form})
+    return render(request, 'login.html', {'form': signup_form})
 
 
 def login(request):
@@ -67,10 +74,12 @@ def login(request):
         login_form = account.LoginForm(request.POST)
         if login_form.is_valid():
             login_info = login_form.cleaned_data
+            print(login_info)
             user = auth.authenticate(
                 username=login_info['username'],
                 password=login_info['password']
             )
+            print(user)
             if user and user.is_active:
                 auth.login(request, user)
                 next_url = request.POST.get('next')

@@ -1,6 +1,6 @@
 <style>
 span.sl-custom-file{position:relative;display:block;zoom:1;cursor:pointer;vertical-align:middle;}
-span.sl-custom-file input.ui-input-file{position:absolute;right:0;top:0;_zoom:30;font-size:300px/9;height:100%;_height:auto;opacity:0;filter:alpha(opacity=0);-ms-filter:"alpha(opacity=0)";cursor:pointer;}
+span.sl-custom-file input.ui-input-file{position:absolute;right:0;top:0;_zoom:30;height:100%;width:100%;_height:auto;opacity:0;filter:alpha(opacity=0);-ms-filter:"alpha(opacity=0)";cursor:pointer;}
 </style>
 
 {% extends "modules/base.html" %}
@@ -47,26 +47,23 @@ span.sl-custom-file input.ui-input-file{position:absolute;right:0;top:0;_zoom:30
                     <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="." enctype="multipart/form-data">
                     <h1>{% csrf_token %}</h1>
                     <div class="form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">任务名称
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">任务名称 <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="form-control" name="name">
-                            <option>HDFS</option>
-                            <option>HBASE</option>
-                          </select>
+                          <input type="text" name="job_name" required="required" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
                       <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="size">描述 <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="description" required="required" class="form-control col-md-7 col-xs-12">
+                          <input type="text" name="job_desc" required="required" class="form-control col-md-7 col-xs-12">
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="priority" class="control-label col-md-3 col-sm-3 col-xs-12">优先级 </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="form-control" name="priority">
+                          <select class="form-control" name="job_priority">
                             <option value="3">高</option>
                             <option value="2">中</option>
                             <option value="1">低</option>
