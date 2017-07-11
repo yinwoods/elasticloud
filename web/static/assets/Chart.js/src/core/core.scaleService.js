@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = function(Chart) {
 
@@ -24,10 +24,20 @@ module.exports = function(Chart) {
 			// Return the scale defaults merged with the global settings so that we always use the latest ones
 			return this.defaults.hasOwnProperty(type) ? helpers.scaleMerge(Chart.defaults.scale, this.defaults[type]) : {};
 		},
-		addScalesToLayout: function(chartInstance) {
+		updateScaleDefaults: function(type, additions) {
+			var defaults = this.defaults;
+			if (defaults.hasOwnProperty(type)) {
+				defaults[type] = helpers.extend(defaults[type], additions);
+			}
+		},
+		addScalesToLayout: function(chart) {
 			// Adds each scale to the chart.boxes array to be sized accordingly
-			helpers.each(chartInstance.scales, function(scale) {
-				Chart.layoutService.addBox(chartInstance, scale);
+			helpers.each(chart.scales, function(scale) {
+				// Set ILayoutItem parameters for backwards compatibility
+				scale.fullWidth = scale.options.fullWidth;
+				scale.position = scale.options.position;
+				scale.weight = scale.options.weight;
+				Chart.layoutService.addBox(chart, scale);
 			});
 		}
 	};
