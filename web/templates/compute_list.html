@@ -109,28 +109,5 @@ window.onload = function() {
       });
     }
 }
-
-function remove_compute(container_id, master_ip) {
-  if(confirm("删除计算集群: " + master_ip + "?")) {
-    $.ajax({
-      type: 'GET',
-      url: '/web/cluster/compute/remove/',
-      data: 'container_id=' + container_id,
-      success: function(message) {
-        if(message == 'true') {
-          window.location.hash = 'true';
-          window.location.reload();
-        }
-      },
-      error: function(message) {
-        if(message == 'false') {
-            window.location.hash = 'false';
-            window.location.reload();
-        }
-      }
-    })
-  }
-}
-
 </script>
 {% endblock %}

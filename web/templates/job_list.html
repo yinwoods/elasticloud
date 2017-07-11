@@ -110,44 +110,5 @@ window.onload = function() {
       });
     }
 }
-
-function remove_job(job_id, job_name) {
-  if(confirm("删除任务: " + job_name + "?")) {
-    $.ajax({
-      type: 'GET',
-      url: '/web/job/remove/',
-      data: 'job_id=' + job_id,
-      success: function(message) {
-        if(message == 'true') {
-          window.location.hash = 'true';
-          window.location.reload();
-        }
-      },
-      error: function(message) {
-        if(message == 'false') {
-            window.location.hash = 'false';
-            window.location.reload();
-        }
-      }
-    })
-  }
-}
-
-function launch_job(job_id, job_name) {
-  if(confirm("启动任务: " + job_name + "?")) {
-    $.ajax({
-      type: 'GET',
-      url: '/web/job/launch/',
-      data: 'job_id=' + job_id,
-      success: function(message) {
-        alert(message);
-        window.location.reload();
-      },
-      error: function(message) {
-        alert("Error! Please check your docker proxy server.");
-      }
-    })
-  }
-}
 </script>
 {% endblock %}

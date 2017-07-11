@@ -4,6 +4,8 @@ import logging
 import time
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import QueryDict
 from django.http import HttpResponse
 from elasticloud.settings import LOGIN_URL
 from web.models.job import Job
@@ -25,9 +27,6 @@ def submit(request):
             job_name = request.POST.get('job_name')
             job_desc = request.POST.get('job_desc')
             job_priority = request.POST.get('job_priority')
-            print(request.FILES)
-            for key, value in request.FILES.items():
-                print(key, value)
             job_file = request.FILES.get('job_file', None)
             if job_file:
                 dst = 'web/upload/' + user.__str__() + '/'
@@ -44,17 +43,16 @@ def submit(request):
         except Exception as e:
             message = 'Submit failed,cause by ' + str(e)
             logger.error(e)
-        print('x' * 50)
-        print(message)
-        print('x' * 50)
     return render(request, 'job_submit.html', {'message': message})
 
 
 @login_required(login_url=LOGIN_URL)
 def remove(request):
-    if request.method == 'GET':
+    print(request.method)
+    if request.method == 'DELETE':
         try:
-            job_id = request.GET.get('job_id')
+            delete = QueryDict(request.body)
+            job_id = delete.get('job_id')
             jobs = Job.objects.filter(id=job_id)
             for job in jobs:
                 job_file = job.job_file
@@ -89,7 +87,6 @@ def list(request):
 @login_required(login_url=LOGIN_URL)
 def execute(request):
     lines = Execute.objects.filter(user=request.user).order_by('-execute_time')
-    print(lines)
     return render(request, 'job_execute.html', {'lines': lines})
 
 

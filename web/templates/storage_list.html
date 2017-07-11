@@ -118,28 +118,5 @@ window.onload = function() {
       });
     }
 }
-
-function remove_storage(master_ip) {
-  if(confirm("删除存储集群: " + master_ip + "?")) {
-    $.ajax({
-      type: 'GET',
-      url: '/web/cluster/storage/remove/',
-      data: 'master_ip=' + master_ip,
-      success: function(message) {
-        if(message == 'true') {
-          window.location.hash = 'true';
-          window.location.reload();
-        }
-      },
-      error: function(message) {
-        if(message == 'false') {
-            window.location.hash = 'false';
-            window.location.reload();
-        }
-      }
-    })
-  }
-}
-
 </script>
 {% endblock %}
