@@ -4,7 +4,6 @@ import logging
 import time
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import QueryDict
 from django.http import HttpResponse
 from elasticloud.settings import LOGIN_URL

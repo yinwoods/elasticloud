@@ -3,6 +3,7 @@ import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.http import QueryDict
 from elasticloud.settings import LOGIN_URL
 from web.utils import boot_strap
 from web.utils import zk_util
@@ -13,6 +14,7 @@ from web.models.res import Storage
 logger = logging.getLogger(__name__)
 
 
+@login_required(login_url=LOGIN_URL)
 def create_storage(kwargs):
 
     storage_type = kwargs.get('storage_type')
@@ -111,9 +113,10 @@ def list(request):
 
 @login_required(login_url=LOGIN_URL)
 def remove(request):
-    if request.method == 'GET':
+    if request.method == 'DELETE':
         try:
-            master_ip = request.GET.get('master_ip')
+            delete = QueryDict(request.body)
+            master_ip = delete.get('master_ip')
             recs = Record.objects.filter(master_ip=master_ip)
             for rec in recs:
                 boot_strap.kill_container_by_id(rec.container_id)

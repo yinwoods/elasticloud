@@ -156,11 +156,10 @@ def launch_job(job, storage, user_id):
             wait_time = 0
             while not on_line:
                 logger.info("wait for RM online...")
-                print("waitting...")
                 time.sleep(2)
                 wait_time += 2
                 on_line = isOnService(url)
-                if wait_time > 180:
+                if wait_time > 360:
                     break
             if on_line:
                 print("try to submit job to az")

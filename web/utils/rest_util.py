@@ -58,14 +58,6 @@ def az_post(host, port, timeout, path, params, headers=None):
                 "Content-type": "application/x-www-form-urlencoded",
                 "Accept": "text/plain"
             }
-        # http_client = httplib.HTTPConnection(host, port, timeout=timeout)
-        print('x' * 100)
-        print('in az_post')
-        print(host, port, timeout, path, params)
-        print('x' * 100)
-        # http_client.request("POST", path, params, headers)
-        # response = http_client.getresponse()
-        # str_t = response.read()
         response = requests.post(path, params, headers)
         return response.text
     except Exception as e:
