@@ -7,7 +7,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-'''
 def simple_post(url, params, headers=None):
     proto, rest = urllib.splittype(url)
     host, rest = urllib.splithost(rest)
@@ -46,7 +45,6 @@ def simple_get(url):
     c.setopt(c.WRITEFUNCTION, b.write)
     c.perform()
     return b.getvalue()
-'''
 
 
 def az_post(host, port, timeout, path, params, headers=None):

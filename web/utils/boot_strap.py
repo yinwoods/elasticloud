@@ -94,13 +94,13 @@ def boot_storage_nosql_master(USER_ID, memory):
         'ZK_HOSTS': get_zk_hosts(),
         'USER_ID': USER_ID
     }
-    params = {
+    payload = {
         "image": image,
         "mem_limit": memory,
         "network_name": get_network_name(),
         "environment": environment
     }
-    return requests.post(url + "/ws/containers/create", params)
+    return requests.post(url + "/ws/containers/create", json=payload)
 
 
 def boot_compute_yarn_master(NAMENODE_IP, USER_ID):
@@ -116,22 +116,24 @@ def boot_compute_yarn_master(NAMENODE_IP, USER_ID):
         "YARN_SLAVE_IMAGE": "yinwoods/compute_yarn_slave:1.0",
         "DOCKER_NETWORK": get_network_name()
     }
-    params = {
+    payload = {
         "image": image,
         "mem_limit": "1024MB",
         "network_name": get_network_name(),
         "environment": environment
     }
-    return requests.post(url + "/ws/containers/create", params)
+    request_url = url + '/ws/containers/create'
+    return requests.post(request_url, json=payload)
 
 
-def kill_container_by_id(id):
+def kill_container_by_id(container_id):
     try:
         url = get_docker_proxy_url()
-        params = {
-            "id": id
+        payload = {
+            "id": container_id
         }
-        requests.post(url + "/ws/containers/kill", params)
+        request_url = url + '/ws/containers/kill'
+        requests.post(request_url, json=payload)
     except Exception as e:
         logger.warning(e.message)
 
@@ -166,7 +168,7 @@ def launch_job(job, storage, user_id):
                 if az_result:
                     execute = Execute(user=job.user, job=job,
                                       c_ip=min_cluster['ip'],
-                                      s_ip=storage.m_ip, execute_log='')
+                                      s_ip=storage.master_ip, execute_log='')
                     execute.save()
                     return 'Job has been submited successfully!'
                 else:
@@ -181,16 +183,17 @@ def launch_job(job, storage, user_id):
 
 
 def launch_by_new(storage, user_id, az_port, job):
-    result = boot_compute_yarn_master(storage.m_ip, user_id)
-    result = json.loads(result)
+    result = boot_compute_yarn_master(storage.master_ip, user_id)
+    result = result.json()
     success = result['success']
     if success:
-        c_id = result['data']['Id']
+        container_id = result['data']['Id']
         ip = result['data']['IPAddress']
-        garbage = Compute.objects.filter(m_ip=ip)
+        garbage = Compute.objects.filter(master_ip=ip)
         for c in garbage:
             c.delete()
-        compute = Compute(user=job.user, c_id=c_id, m_ip=ip, storage=storage)
+        compute = Compute(user=job.user, container_id=container_id,
+                          master_ip=ip, storage=storage)
         compute.save()
         # check service
         url = "http://" + ip + ":" + az_port.__str__()
@@ -209,16 +212,16 @@ def launch_by_new(storage, user_id, az_port, job):
             az_result = az_submit(ip, job)
             if az_result:
                 execute = Execute(user=job.user, job=job, c_ip=ip,
-                                  s_ip=storage.m_ip, execute_log='')
+                                  s_ip=storage.master_ip, execute_log='')
                 execute.save()
                 return 'Job has been submited successfully!'
             else:
                 print("Submit job to Azkaban Failed!")
-                kill_container_by_id(c_id)
+                kill_container_by_id(container_id)
                 return 'Submit job to Azkaban Failed!'
         else:
             print("not online")
-            kill_container_by_id(c_id)
+            kill_container_by_id(container_id)
             logger.warning("Boot RM succeed, but not on service.")
             return 'Boot RM succeed, but not on service.'
     else:

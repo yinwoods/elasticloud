@@ -1,0 +1,91 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "pnotify",
+        "scope": null,
+        "escapedName": "pnotify",
+        "name": "pnotify",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/yinwoods/Downloads/503/elasticloud/web/static"
+    ]
+  ],
+  "_from": "pnotify@latest",
+  "_id": "pnotify@3.2.0",
+  "_inCache": true,
+  "_location": "/pnotify",
+  "_nodeVersion": "4.7.2",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/pnotify-3.2.0.tgz_1493063982744_0.19244369002990425"
+  },
+  "_npmUser": {
+    "name": "sciactive",
+    "email": "hperrin@gmail.com"
+  },
+  "_npmVersion": "3.5.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "pnotify",
+    "scope": null,
+    "escapedName": "pnotify",
+    "name": "pnotify",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/pnotify/-/pnotify-3.2.0.tgz",
+  "_shasum": "22f41a6c28d8d4270a811da8e09ba828e8e02377",
+  "_shrinkwrap": null,
+  "_spec": "pnotify",
+  "_where": "/Users/yinwoods/Downloads/503/elasticloud/web/static",
+  "author": {
+    "name": "Hunter Perrin"
+  },
+  "bugs": {
+    "url": "https://github.com/sciactive/pnotify/issues"
+  },
+  "dependencies": {
+    "jquery": ">=1.6.0"
+  },
+  "description": "[![Stories in Ready](https://badge.waffle.io/sciactive/pnotify.png?label=ready&title=Ready)](http://waffle.io/sciactive/pnotify) [![Stories in Progress](https://badge.waffle.io/sciactive/pnotify.png?label=in%20progress&title=In%20Progress)](http://waffle.",
+  "devDependencies": {
+    "clean-css": "^4.0.12",
+    "shelljs": "^0.7.7",
+    "uglify-js": "^2.8.22"
+  },
+  "directories": {
+    "lib": "dist"
+  },
+  "dist": {
+    "shasum": "22f41a6c28d8d4270a811da8e09ba828e8e02377",
+    "tarball": "https://registry.npmjs.org/pnotify/-/pnotify-3.2.0.tgz"
+  },
+  "gitHead": "ffb47b2b4f1ed4aaf6c60db0b84d6218a05dfd22",
+  "homepage": "https://github.com/sciactive/pnotify",
+  "license": "Apache-2.0",
+  "main": "dist/pnotify.js",
+  "maintainers": [
+    {
+      "name": "sciactive",
+      "email": "hperrin@gmail.com"
+    }
+  ],
+  "name": "pnotify",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sciactive/pnotify.git"
+  },
+  "scripts": {
+    "dist": "nodejs make.js dist"
+  },
+  "version": "3.2.0"
+}

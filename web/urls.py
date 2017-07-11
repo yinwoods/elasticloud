@@ -42,23 +42,23 @@ urlpatterns = [
     # Job
     url(r'^job/list/$', job.list, name='job_list'),
     url(r'^job/execute/$', job.execute, name='job_execute^'),
-    url(r'^job/execute/delete$', job.execute_delete,
-        name='job_execute_delete'),
+    url(r'^job/execute/remove$', job.execute_remove,
+        name='job_execute_remove'),
 
     url(r'^job/submit/$', job.submit, name='job_submit'),
     url(r'^job/launch/$', job.launch, name='job_launch'),
-    url(r'^job/delete/$', job.delete, name='job_delete'),
+    url(r'^job/remove/$', job.remove, name='job_remove'),
 
 
     # Cluster
     url(r'^cluster/compute/list/$', compute.list, name='cluster_compute_list'),
-    url(r'^cluster/compute/delete/$', compute.delete,
-        name='cluster_compute_delete'),
+    url(r'^cluster/compute/remove/$', compute.remove,
+        name='cluster_compute_remove'),
     url(r'^cluster/storage/create/$', storage.create,
         name='cluster_storage_create'),
     url(r'^cluster/storage/list/$', storage.list, name='cluster_storage_list'),
-    url(r'^cluster/storage/delete/$', storage.delete,
-        name='cluster_storage_delete'),
+    url(r'^cluster/storage/remove/$', storage.remove,
+        name='cluster_storage_remove'),
 
 
 ]

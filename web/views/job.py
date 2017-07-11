@@ -22,42 +22,47 @@ def submit(request):
     if request.method == 'POST':
         try:
             user = request.user
-            name = request.POST.get('name')
-            description = request.POST.get('description')
-            priority = request.POST.get('priority')
-            upload_file = request.FILES.get('upload_file', None)
-            if upload_file:
+            job_name = request.POST.get('job_name')
+            job_desc = request.POST.get('job_desc')
+            job_priority = request.POST.get('job_priority')
+            print(request.FILES)
+            for key, value in request.FILES.items():
+                print(key, value)
+            job_file = request.FILES.get('job_file', None)
+            if job_file:
                 dst = 'web/upload/' + user.__str__() + '/'
                 if not os.path.exists(dst):
                     os.makedirs(dst)
-                dst = dst + time.time().__str__() + '-' + upload_file.__str__()
+                dst = dst + str(time.time()) + '-' + str(job_file)
                 with open(dst, 'wb+') as destination:
-                    for chunk in upload_file.chunks():
+                    for chunk in job_file.chunks():
                         destination.write(chunk)
-                job = Job(user=user, name=name, desc=description,
-                          file=dst, priority=priority)
+                job = Job(user=user, job_name=job_name, job_desc=job_desc,
+                          job_file=dst, job_priority=job_priority)
                 job.save()
                 message = 'Submit success.'
         except Exception as e:
             message = 'Submit failed,cause by ' + str(e)
             logger.error(e)
+        print('x' * 50)
+        print(message)
+        print('x' * 50)
     return render(request, 'job_submit.html', {'message': message})
 
 
 @login_required(login_url=LOGIN_URL)
-def delete(request):
+def remove(request):
     if request.method == 'GET':
         try:
-            id = request.GET.get('id')
-            jobs = Job.objects.filter(id=id)
+            job_id = request.GET.get('job_id')
+            jobs = Job.objects.filter(id=job_id)
             for job in jobs:
-                file = job.file
-                os.remove(file)
+                job_file = job.job_file
+                os.remove(job_file)
                 job.delete()
             return HttpResponse("true")
         except Exception as e:
-            print(e)
-            logger.warning(e.message)
+            logger.warning(e)
             return HttpResponse("false")
 
 
@@ -67,10 +72,10 @@ def launch(request):
             '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')
     if count == 0:
         return HttpResponse("No available HDFS resource.")
-    hdfs_m_ip = zk_util.get_children(
+    hdfs_master_ip = zk_util.get_children(
             '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')[0]
-    storage = Storage.objects.filter(m_ip=hdfs_m_ip)
-    job = Job.objects.get(id=int(request.GET.get('id')))
+    storage = Storage.objects.filter(master_ip=hdfs_master_ip)
+    job = Job.objects.get(id=int(request.GET.get('job_id')))
     success = launch_job(job, storage[0], request.user.username)
     return HttpResponse(success)
 
@@ -89,11 +94,11 @@ def execute(request):
 
 
 @login_required(login_url=LOGIN_URL)
-def execute_delete(request):
+def execute_remove(request):
     if request.method == 'GET':
         try:
-            id = request.GET.get('id')
-            executes = Execute.objects.filter(id=id)
+            job_id = request.GET.get('job_id')
+            executes = Execute.objects.filter(id=job_id)
             for exe in executes:
                 exe.delete()
             return HttpResponse("true")

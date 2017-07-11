@@ -60,13 +60,13 @@
                           <tr>
                             <th scope="row">{{ forloop.counter }}</th>
                             <td>
-                              <a href="http://{{ line.m_ip }}:8088" target="_blank">{{ line.m_ip }}</a>
+                              <a href="http://{{ line.master_ip }}:8088" target="_blank">{{ line.master_ip }}</a>
                             </td>
                             <td>
-                                <a href="http://{{ line.storage.m_ip}}:50070/" target="_blank">{{ line.storage.m_ip }}</a>
+                                <a href="http://{{ line.storage.master_ip }}:50070/" target="_blank">{{ line.storage.master_ip }}</a>
                             </td>
                             <td>{{ line.date }}</td>
-                            <td><a href=""><i class="fa fa-trash-o red fa-lg"></i></a></td>
+                            <td><a href="#" onclick="remove_compute('{{ line.container_id }}', '{{ line.master_ip }}')"><i class="fa fa-trash-o red fa-lg"></i></a></td>
                           </tr>
                         {% endfor %}
                       </tbody>
@@ -77,4 +77,60 @@
             </div>
           </div>
         </div>
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript">
+window.onload = function() {
+    var hash = window.location.hash;
+    if (hash == '#true') {
+      new PNotify({
+        title: 'Success!',
+        type: 'info',
+        text: '删除集群成功！',
+        nonblock: {
+          nonblock: true
+        },
+        styling: 'bootstrap3',
+        addclass: 'dark',
+      });
+      window.location.hash = '';
+    } else if (hash == '#false') {
+      new PNotify({
+        title: 'Failed!',
+        type: 'danger',
+        text: '删除集群失败! ',
+        nonblock: {
+            nonblock: true
+        },
+        styling: 'bootstrap3',
+        addclass: 'dark',
+      });
+    }
+}
+
+function remove_compute(container_id, master_ip) {
+  if(confirm("删除计算集群: " + master_ip + "?")) {
+    $.ajax({
+      type: 'GET',
+      url: '/web/cluster/compute/remove/',
+      data: 'container_id=' + container_id,
+      success: function(message) {
+        if(message == 'true') {
+          window.location.hash = 'true';
+          window.location.reload();
+        }
+      },
+      error: function(message) {
+        if(message == 'false') {
+            window.location.hash = 'false';
+            window.location.reload();
+        }
+      }
+    })
+  }
+}
+
+</script>
 {% endblock %}

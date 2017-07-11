@@ -75,7 +75,7 @@
                             <td>{{ line.slave_memory }}</td>
                             <td>{{ line.storage_type }}</td>
                             <td>{{ line.date }}</td>
-                            <td><a href="#", onclick="delete_storage('{{ line.master_ip }}');"><i class="fa fa-trash-o red fa-lg"></i></a></td>
+                            <td><a href="#" onclick="remove_storage('{{ line.master_ip }}');"><i class="fa fa-trash-o red fa-lg"></i></a></td>
                           </tr>
                         {% endfor %}
                       </tbody>
@@ -89,24 +89,57 @@
 {% endblock %}
 
 {% block script %}
+
 <script type="text/javascript">
-function delete_storage(master_ip) {
-    if(confirm("确认删除：" + master_ip + "？")) {
-        $.ajax({
-            type: 'GET',
-            url: '/web/cluster/storage/delete/',
-            data: "master_ip=" + master_ip,
-            success: function(msg) {
-                if(msg == 'true'){
-                    alert('success!');
-                    window.location.reload();
-                } else {
-                    alert("failed!");
-                }
-            },
-            error: function() {}
-        });
+window.onload = function() {
+    var hash = window.location.hash;
+    if (hash == '#true') {
+      new PNotify({
+        title: 'Success!',
+        type: 'info',
+        text: '删除集群成功！',
+        nonblock: {
+          nonblock: true
+        },
+        styling: 'bootstrap3',
+        addclass: 'dark',
+      });
+      window.location.hash = '';
+    } else if (hash == '#false') {
+      new PNotify({
+        title: 'Failed!',
+        type: 'danger',
+        text: '删除集群失败! ',
+        nonblock: {
+            nonblock: true
+        },
+        styling: 'bootstrap3',
+        addclass: 'dark',
+      });
     }
 }
+
+function remove_storage(master_ip) {
+  if(confirm("删除存储集群: " + master_ip + "?")) {
+    $.ajax({
+      type: 'GET',
+      url: '/web/cluster/storage/remove/',
+      data: 'master_ip=' + master_ip,
+      success: function(message) {
+        if(message == 'true') {
+          window.location.hash = 'true';
+          window.location.reload();
+        }
+      },
+      error: function(message) {
+        if(message == 'false') {
+            window.location.hash = 'false';
+            window.location.reload();
+        }
+      }
+    })
+  }
+}
+
 </script>
 {% endblock %}

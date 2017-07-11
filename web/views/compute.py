@@ -18,10 +18,11 @@ def list(request):
 
 
 @login_required(login_url=LOGIN_URL)
-def delete(request):
+def remove(request):
     if request.method == 'GET':
         try:
             container_id = request.GET.get('container_id')
+            print(container_id)
             compute = Compute.objects.get(container_id=container_id)
             boot_strap.kill_container_by_id(container_id)
             compute.delete()

@@ -110,7 +110,7 @@ def list(request):
 
 
 @login_required(login_url=LOGIN_URL)
-def delete(request):
+def remove(request):
     if request.method == 'GET':
         try:
             master_ip = request.GET.get('master_ip')

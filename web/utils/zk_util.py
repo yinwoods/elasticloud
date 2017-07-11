@@ -1,6 +1,5 @@
 # coding:utf-8
 import logging
-import sys
 import json
 import requests
 from kazoo.client import KazooClient
@@ -42,7 +41,7 @@ def get_children(path):
 
 def get_min_cluster(user_id):
     path = '/EC_ROOT/' + user_id + '/COMPUTE'
-    min_nodes = sys.maxint
+    min_nodes = float("inf")
     min_ip = ''
     children = get_children(path)
     if len(children) == 0:
