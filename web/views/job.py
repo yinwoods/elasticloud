@@ -47,11 +47,10 @@ def submit(request):
 
 @login_required(login_url=LOGIN_URL)
 def remove(request):
-    print(request.method)
     if request.method == 'DELETE':
         try:
-            delete = QueryDict(request.body)
-            job_id = delete.get('job_id')
+            request_params = QueryDict(request.body)
+            job_id = request_params.get('job_id')
             jobs = Job.objects.filter(id=job_id)
             for job in jobs:
                 job_file = job.job_file
@@ -65,16 +64,18 @@ def remove(request):
 
 @login_required(login_url=LOGIN_URL)
 def launch(request):
-    count = zk_util.count(
-            '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')
-    if count == 0:
-        return HttpResponse("No available HDFS resource.")
-    hdfs_master_ip = zk_util.get_children(
-            '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')[0]
-    storage = Storage.objects.filter(master_ip=hdfs_master_ip)
-    job = Job.objects.get(id=int(request.GET.get('job_id')))
-    success = launch_job(job, storage[0], request.user.username)
-    return HttpResponse(success)
+    if request.method == 'POST':
+        job_id = request.POST.get('job_id')
+        count = zk_util.count(
+                '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')
+        if count == 0:
+            return HttpResponse("No available Storage resource.")
+        hdfs_master_ip = zk_util.get_children(
+                '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')[0]
+        storage = Storage.objects.filter(master_ip=hdfs_master_ip)
+        job = Job.objects.get(id=int(job_id))
+        success = launch_job(job, storage[0], request.user.username)
+        return HttpResponse(success)
 
 
 @login_required(login_url=LOGIN_URL)

@@ -2,6 +2,7 @@
 import logging
 import json
 import requests
+import xml.etree.ElementTree as ET
 from kazoo.client import KazooClient
 from web.utils.config_util import get_zk_hosts
 
@@ -49,9 +50,10 @@ def get_min_cluster(user_id):
     for child in children:
         try:
             url = "http://" + child + ":8088/ws/v1/cluster/metrics"
-            result = requests.get(url)
-            result = json.loads(result)
-            active_nodes = int(result['clusterMetrics']['activeNodes'])
+            response = requests.get(url)
+            tree = ET.ElementTree(response.text)
+            result = json.loads(tree.__dict__['_root'])
+            active_nodes = int(result.get('clusterMetrics').get('activeNodes'))
             if active_nodes < min_nodes:
                 min_nodes = active_nodes
                 min_ip = child

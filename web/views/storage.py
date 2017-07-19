@@ -14,7 +14,6 @@ from web.models.res import Storage
 logger = logging.getLogger(__name__)
 
 
-@login_required(login_url=LOGIN_URL)
 def create_storage(kwargs):
 
     storage_type = kwargs.get('storage_type')

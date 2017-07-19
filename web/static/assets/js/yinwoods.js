@@ -17,7 +17,6 @@ function remove_job(job_id, job_name) {
       data: 'job_id=' + job_id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-        window.console.log(getCookie('csrftoken'));
       },
       success: function(message) {
         if(message == 'true') {
@@ -41,6 +40,9 @@ function launch_job(job_id, job_name) {
       type: 'POST',
       url: '/web/job/launch/',
       data: 'job_id=' + job_id,
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+      },
       success: function(message) {
         alert(message);
         window.location.reload();
@@ -58,6 +60,9 @@ function remove_compute(container_id, master_ip) {
       type: 'DELETE',
       url: '/web/cluster/compute/remove/',
       data: 'container_id=' + container_id,
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+      },
       success: function(message) {
         if(message == 'true') {
           window.location.hash = 'true';
@@ -77,9 +82,12 @@ function remove_compute(container_id, master_ip) {
 function remove_storage(master_ip) {
   if(confirm("删除存储集群: " + master_ip + "?")) {
     $.ajax({
-      type: 'GET',
+      type: 'DELETE',
       url: '/web/cluster/storage/remove/',
       data: 'master_ip=' + master_ip,
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+      },
       success: function(message) {
         if(message == 'true') {
           window.location.hash = 'true';

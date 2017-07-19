@@ -9,7 +9,7 @@ from web.utils.config_util import get_network_name
 from web.utils.config_util import get_zk_hosts
 from web.utils.zk_util import get_min_cluster
 from web.models.res import Compute
-from web.utils.rest_util import isOnService, az_upload, az_post
+from web.utils.rest_util import yarn_is_active, az_upload, az_post
 from web.models.job import Execute
 
 logger = logging.getLogger(__name__)
@@ -149,20 +149,19 @@ def launch_job(job, storage, user_id):
         # calcute benefit
         cost = get_cost_by_scale(min_cluster['nodes'])
         price_dict = {1: 100, 2: 500, 3: 1000}
-        price = price_dict[job.priority]
+        price = price_dict[job.job_priority]
         if price > cost:
-            url = "http://" + min_cluster['ip'] + ":" + az_port.__str__()
-            on_line = isOnService(url)
+            url = "http://" + min_cluster['ip'] + ":" + str(az_port)
+            on_line = yarn_is_active(url)
             wait_time = 0
             while not on_line:
                 logger.info("wait for RM online...")
                 time.sleep(2)
                 wait_time += 2
-                on_line = isOnService(url)
+                on_line = yarn_is_active(url)
                 if wait_time > 360:
                     break
             if on_line:
-                print("try to submit job to az")
                 az_result = az_submit(min_cluster['ip'], job)
                 if az_result:
                     execute = Execute(user=job.user, job=job,
@@ -195,15 +194,15 @@ def launch_by_new(storage, user_id, az_port, job):
                           master_ip=ip, storage=storage)
         compute.save()
         # check service
-        url = "http://" + ip + ":" + az_port.__str__()
-        on_line = isOnService(url)
+        url = "http://" + ip + ":" + str(az_port)
+        on_line = yarn_is_active(url)
         wait_time = 0
         while not on_line:
             logger.info("wait for RM online...")
             print("waitting...")
             time.sleep(2)
             wait_time += 2
-            on_line = isOnService(url)
+            on_line = yarn_is_active(url)
             if wait_time > 180:
                 break
         if on_line:
@@ -232,33 +231,31 @@ def get_cost_by_scale(node_number):
     return pow(node_number, 2)
 
 
-def az_submit(address, job):
+def az_submit(host_ip, job):
     try:
         az_port = getattr(settings, 'AZ_PORT', 8081)
         az_timeout = getattr(settings, 'AZ_TIMEOUT', 30)
         params = {'action': 'login', 'username': 'shida', 'password': 'shida'}
-        session = json.loads(
-                az_post(address, az_port, az_timeout, '/', params))
-        print('x' * 100)
-        print('in az_submit')
-        print(session)
-        print('x' * 100)
+        response = az_post(host_ip, az_port, az_timeout, '/', params)
+        session = response.json()
+        print('login success')
         session_id = session['session.id']
         params = {'session.id': session_id,
-                  'name': job.name,
-                  'description': job.desc}
-        az_post(address, az_port, az_timeout, '/manager?action=create', params)
-        az_upload('http://' + address + ':' + az_port.__str__() + '/manager',
-                  session_id, job.name, job.file)
-        flows = json.loads(
-            requests.get('http://' + address + ':' + az_port.__str__() +
-                         '/manager?session.id=' + session_id +
-                         '&ajax=fetchprojectflows&project=' + job.name)
-        )
+                  'name': job.job_name,
+                  'description': job.job_desc}
+        az_post(host_ip, az_port, az_timeout, '/manager?action=create', params)
+        print('upload file')
+        az_upload('http://' + host_ip + ':' + str(az_port) + '/manager',
+                  session_id, job.job_name, job.job_file)
+        response = requests.get('http://' + host_ip + ':' + str(az_port) +
+                                '/manager?session.id=' + session_id +
+                                '&ajax=fetchprojectflows&project=' +
+                                job.job_name)
+        flows = response.json()
         response = json.loads(requests.get(
-            'http://' + address + ':' + az_port.__str__() +
+            'http://' + host_ip + ':' + str(az_port) +
             '/executor?session.id=' + session_id +
-            '&ajax=executeFlow&project=' + job.name +
+            '&ajax=executeFlow&project=' + job.job_name +
             '&flow=' + flows['flows'][0]['flowId'],
         ))
         print(response)
