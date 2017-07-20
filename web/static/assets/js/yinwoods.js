@@ -167,3 +167,29 @@ function fake_load() {
         },
     });
 }
+
+function remove_execute_job(job_id, job_name) {
+  if(confirm("删除任务: " + job_name + "?")) {
+    $.ajax({
+      type: 'DELETE',
+      url: '/web/job/execute/remove',
+      data: 'job_id=' + job_id,
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+      },
+      success: function(message) {
+        if(message == 'true') {
+          window.location.hash = 'true';
+          window.location.reload();
+        }
+      },
+      error: function(message) {
+        if(message == 'false') {
+            window.location.hash = 'false';
+            window.location.reload();
+        }
+      }
+    })
+  }
+}
+

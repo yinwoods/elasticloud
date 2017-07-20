@@ -92,9 +92,10 @@ def execute(request):
 
 @login_required(login_url=LOGIN_URL)
 def execute_remove(request):
-    if request.method == 'GET':
+    if request.method == 'DELETE':
         try:
-            job_id = request.GET.get('job_id')
+            request_params = QueryDict(request.body)
+            job_id = request_params.get('job_id')
             executes = Execute.objects.filter(id=job_id)
             for exe in executes:
                 exe.delete()

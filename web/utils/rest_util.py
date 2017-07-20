@@ -1,7 +1,5 @@
 import urllib
-import pycurl
 import requests
-# import StringIO
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,9 +18,6 @@ def simple_post(url, params, headers=None):
         }
         if headers:
             headers = headers
-        # http_client = httplib.HTTPConnection(host, port)
-        # http_client.request("POST", rest, params, headers)
-        # response = http_client.getresponse()
         response = requests.post(rest, params, headers)
         return response.text
     except Exception as e:
@@ -33,47 +28,64 @@ def simple_post(url, params, headers=None):
             http_client.close()
 
 
-def simple_get(url):
-    b = StringIO.StringIO()
-    c = pycurl.Curl()
-    c.setopt(c.URL, url)
-    c.setopt(c.CUSTOMREQUEST, 'GET')
-    c.setopt(c.WRITEFUNCTION, b.write)
-    c.perform()
-    return b.getvalue()
+class AzbakanHTTPPost():
+    def __init__(self, host_ip, port, timeout):
+        self.session = requests.Session()
+        self.host_ip = host_ip
+        self.port = port
+        self.timeout = timeout
 
-
-def az_post(host, port, timeout, path, params, headers=None):
-    try:
-        if headers:
-            headers = headers
-        else:
+    def get(self, path, headers=None):
+        if headers is None:
             headers = {
                 "Content-type": "application/x-www-form-urlencoded",
                 "Accept": "text/plain"
             }
-        session = requests.Session()
-        session.headers = headers
-        request_url = 'http://' + host + ':' + str(port) + path
+        self.session.headers = headers
+        request_url = 'http://{host_ip}:{port}{path}'.format(
+            host_ip=self.host_ip,
+            port=self.port,
+            path=path
+        )
         print('request_url: ', request_url)
-        return session.post(request_url, headers=headers, data=params)
-    except Exception as e:
-        logger.error(e)
-        return e
+        return self.session.get(request_url, headers=headers)
 
+    def post(self, path, params, headers=None):
+        if headers is None:
+            headers = {
+                "Content-type": "application/x-www-form-urlencoded",
+                "Accept": "text/plain"
+            }
+        self.session.headers = headers
+        request_url = 'http://{host_ip}:{port}{path}'.format(
+            host_ip=self.host_ip,
+            port=self.port,
+            path=path
+        )
+        print('request_url: ', request_url)
+        return self.session.post(request_url, headers=headers, data=params)
 
-def az_upload(url, session, project, files):
-    print(session)
-    data = {
-        'session.id': session,
-        'ajax': 'upload'
-    }
-    files = {
-        'file': open(files, 'rb')
-    }
-    response = requests.post(url, files=files, data=data)
-    print(response.text)
-    return response.text
+    def upload(self, path, session, project, files):
+        print(session)
+        headers = {
+            'Content-Type': 'multipart/mixed'
+        }
+        data = {
+            'session.id': session,
+            'ajax': 'upload'
+        }
+        files = {
+            'file': open(files, 'rb')
+        }
+        request_url = 'http://{host_ip}:{port}{path}'.format(
+            host_ip=self.host_ip,
+            port=self.port,
+            path=path
+        )
+        response = self.session.post(request_url, headers=headers,
+                                     files=files, data=data)
+        print(response.text)
+        return response.text
 
 
 def yarn_is_active(url):

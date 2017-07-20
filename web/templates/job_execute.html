@@ -69,9 +69,7 @@
                           <td><a href="http://{{ line.storage_ip }}:50070/" target="_blank">{{ line.storage_ip }}</a></td>
                           <td><span class="o">{{ line.job_stat }}</span></td>
                           <td>
-                            <a href=""><i class="fa fa-cloud-upload blue fa-lg"></i></a>
-                            <span>&#8203;&#8203;</span>
-                            <a href=""><i class="fa fa-trash-o red fa-lg"> </i></a>
+                              <a href="#" onclick="remove_execute_job('{{ line.id }}', '{{ line.job.job_name }}')"><i class="fa fa-trash-o red fa-lg"> </i></a>
                           </td>
                         </tr>
                         {% endfor %}
@@ -83,4 +81,35 @@
             </div>
           </div>
         </div>
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript">
+window.onload = function() {
+    var hash = window.location.hash;
+    if (hash == '#true') {
+      new PNotify({
+        title: 'Success!',
+        type: 'success',
+        text: '删除任务成功！',
+        nonblock: {
+          nonblock: true
+        },
+        styling: 'bootstrap3'
+      });
+      window.location.hash = '';
+    } else if (hash == '#false') {
+      new PNotify({
+        title: 'Failed!',
+        type: 'danger',
+        text: '删除任务失败! ',
+        nonblock: {
+            nonblock: true
+        },
+        styling: 'bootstrap3',
+      });
+    }
+}
+</script>
 {% endblock %}
