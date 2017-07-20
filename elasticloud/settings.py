@@ -224,7 +224,7 @@ STATICFILES_DIRS = [
 # Web setting
 
 APP_NAME = 'ElastiCloud'
-LOGIN_URL = '/web/account/login/'
+LOGIN_URL = '/web/account/login'
 EMAIL_ADDRESS = 'elasticloud@163.com'
 EMAIL_PASSWORD = '18800120609ec'
 ZK_HOSTS = '192.168.211.159:2181'
