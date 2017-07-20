@@ -1,10 +1,3 @@
-<!--
-<style>
-span.sl-custom-file{position:relative;display:block;zoom:1;cursor:pointer;vertical-align:middle;}
-span.sl-custom-file input.ui-input-file{position:absolute;right:0;top:0;_zoom:30;height:100%;width:100%;_height:auto;opacity:0;filter:alpha(opacity=0);-ms-filter:"alpha(opacity=0)";cursor:pointer;}
-</style>
--->
-
 {% extends "modules/base.html" %}
 
 {% block page-content %}
@@ -46,7 +39,7 @@ span.sl-custom-file input.ui-input-file{position:absolute;right:0;top:0;_zoom:30
                   </div>
                   <div class="x_content">
                     <br />
-                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="." enctype="multipart/form-data">
+                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">任务名称 <span class="required">*</span>

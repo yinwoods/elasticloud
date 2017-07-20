@@ -1,6 +1,7 @@
 {% extends "modules/base.html" %}
 
 {% block page-content %}
+    {% load filters %}
         <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -64,7 +65,7 @@
                           <th scope="row">{{ forloop.counter }}</th>
                           <td>{{ line.job.job_name }}</td>
                           <td>{{ line.job.job_desc }}</td>
-                          <td>{{ line.job.job_priority  }}</td>
+                          <td>{{ line.job.job_priority | priority_text }}</td>
                           <td><a href="http://{{ line.computer_ip }}:8088/" target="_blank">{{ line.computer_ip }}</a></td>
                           <td><a href="http://{{ line.storage_ip }}:50070/" target="_blank">{{ line.storage_ip }}</a></td>
                           <td><span class="o">{{ line.job_stat }}</span></td>

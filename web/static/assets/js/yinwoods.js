@@ -13,7 +13,7 @@ function remove_job(job_id, job_name) {
   if(confirm("删除任务: " + job_name + "?")) {
     $.ajax({
       type: 'DELETE',
-      url: '/web/job/remove/',
+      url: '/web/job/remove',
       data: 'job_id=' + job_id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
@@ -38,7 +38,7 @@ function launch_job(job_id, job_name) {
   if(confirm("启动任务: " + job_name + "?")) {
     $.ajax({
       type: 'POST',
-      url: '/web/job/launch/',
+      url: '/web/job/launch',
       data: 'job_id=' + job_id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
@@ -58,7 +58,7 @@ function remove_compute(container_id, master_ip) {
   if(confirm("删除计算集群: " + master_ip + "?")) {
     $.ajax({
       type: 'DELETE',
-      url: '/web/cluster/compute/remove/',
+      url: '/web/cluster/compute/remove',
       data: 'container_id=' + container_id,
       beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
@@ -83,7 +83,7 @@ function remove_storage(master_ip) {
   if(confirm("删除存储集群: " + master_ip + "?")) {
     $.ajax({
       type: 'DELETE',
-      url: '/web/cluster/storage/remove/',
+      url: '/web/cluster/storage/remove',
       data: 'master_ip=' + master_ip,
       beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));

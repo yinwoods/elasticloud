@@ -96,13 +96,12 @@ window.onload = function() {
     if (hash == '#true') {
       new PNotify({
         title: 'Success!',
-        type: 'info',
+        type: 'success',
         text: '删除集群成功！',
         nonblock: {
           nonblock: true
         },
-        styling: 'bootstrap3',
-        addclass: 'dark',
+        styling: 'bootstrap3'
       });
       window.location.hash = '';
     } else if (hash == '#false') {
@@ -113,8 +112,7 @@ window.onload = function() {
         nonblock: {
             nonblock: true
         },
-        styling: 'bootstrap3',
-        addclass: 'dark',
+        styling: 'bootstrap3'
       });
     }
 }

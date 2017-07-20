@@ -1,6 +1,7 @@
 {% extends "modules/base.html" %}
 
 {% block page-content %}
+    {% load filters %}
         <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
@@ -63,7 +64,7 @@
                           <th scope="row">{{ forloop.counter }}</th>
                           <td>{{ line.job_name }}</td>
                           <td>{{ line.job_desc }}</td>
-                          <td>{{ line.job_priority  }}</td>
+                          <td>{{ line.job_priority | priority_text }}</td>
                           <td>{{ line.submit_time }}</td>
                           <td><span class="o">{{ line.job_stat }}</span></td>
                           <td>
