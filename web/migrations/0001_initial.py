@@ -19,7 +19,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Compute',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('container_id', models.CharField(max_length=100)),
                 ('master_ip', models.CharField(max_length=20)),
                 ('date', models.DateTimeField(auto_now_add=True)),
@@ -28,7 +29,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Execute',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('c_ip', models.CharField(max_length=50)),
                 ('s_ip', models.CharField(max_length=50)),
                 ('execute_log', models.TextField()),
@@ -38,28 +40,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Job',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=30)),
                 ('desc', models.CharField(max_length=30)),
                 ('file', models.CharField(max_length=1000)),
                 ('priority', models.IntegerField(default=2)),
                 ('stat', models.CharField(default='Ready', max_length=30)),
                 ('submit_time', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='Quota',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('memory', models.IntegerField(default=2048)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='Record',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('container_id', models.CharField(max_length=100)),
                 ('master_ip', models.CharField(max_length=20)),
             ],
@@ -67,34 +76,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Storage',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('master_ip', models.CharField(max_length=20)),
                 ('master_memory', models.CharField(max_length=20)),
                 ('slave_memory', models.CharField(max_length=20)),
                 ('cluster_size', models.IntegerField(default=0)),
                 ('storage_type', models.CharField(max_length=30)),
                 ('date', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
             model_name='execute',
             name='job',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='web.Job'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to='web.Job'),
         ),
         migrations.AddField(
             model_name='execute',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='compute',
             name='storage',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='web.Storage'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='web.Storage'),
         ),
         migrations.AddField(
             model_name='compute',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
     ]
