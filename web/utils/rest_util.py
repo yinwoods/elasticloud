@@ -67,8 +67,6 @@ class AzbakanHTTPPost():
         return self.session.post(request_url, headers=headers, data=params)
 
     def upload(self, path, session, project, files):
-        print(files)
-        files = '/mnt/hgfs/下载/503/elasticloud/' + files
         m = MultipartEncoder(
             fields={
                 'action': 'upload',
