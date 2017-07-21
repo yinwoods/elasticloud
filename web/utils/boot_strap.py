@@ -24,9 +24,6 @@ def boot_storage_hdfs_master(USER_ID, memory):
         'ZK_HOSTS': get_zk_hosts(),
         'USER_ID': USER_ID
     }
-    print('y' * 100)
-    print(environment)
-    print('y' * 100)
     payload = {
         "image": image,
         "mem_limit": memory,
@@ -174,7 +171,6 @@ def launch_job(job, storage, user_id):
                     logger.warning("Submit job to Azkaban Failed!")
                     return 'Submit job to Azkaban Failed!'
             else:
-                print("not online")
                 logger.warning("Boot RM succeed, but not on service.")
                 return 'Boot RM succeed, but not on service.'
         else:
@@ -241,31 +237,21 @@ def az_submit(host_ip, job):
         # login azbakan
         response = http_client.post('/', params)
         session = response.json()
-        print('login success')
-        print(session)
-        print('login succeed')
         session_id = session['session.id']
         params = {'session.id': session_id,
                   'name': job.job_name,
                   'description': job.job_desc}
         http_client.post('/manager?action=create', params)
-        print('upload file')
         http_client.upload('/manager', session_id, job.job_name, job.job_file)
         response = http_client.get('/manager?session.id=' + session_id +
                                    '&ajax=fetchprojectflows&project=' +
                                    job.job_name)
 
         flows = response.json()
-        print('in az_submit')
-        print(flows)
-        print('in az_submit')
-        '''
         response = http_client.get('/executor?session.id=' + session_id +
                                    '&ajax=executeFlow&project=' +
                                    job.job_name + '&flow=' +
                                    flows['flows'][0]['flowId'])
-        print(response)
-        '''
 
         return True
     except Exception as e:

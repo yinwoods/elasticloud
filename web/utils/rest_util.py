@@ -1,6 +1,7 @@
 import urllib
 import requests
 import logging
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -66,16 +67,17 @@ class AzbakanHTTPPost():
         return self.session.post(request_url, headers=headers, data=params)
 
     def upload(self, path, session, project, files):
-        print(session)
+        print(files)
+        files = '/mnt/hgfs/下载/503/elasticloud/' + files
+        m = MultipartEncoder(
+            fields={
+                'action': 'upload',
+                'project': 'test',
+                'file': ('filename', open(files, 'rb'), 'application/zip')
+            }
+        )
         headers = {
-            'Content-Type': 'multipart/mixed'
-        }
-        data = {
-            'session.id': session,
-            'ajax': 'upload'
-        }
-        files = {
-            'file': open(files, 'rb')
+            'Content-Type': m.content_type
         }
         request_url = 'http://{host_ip}:{port}{path}'.format(
             host_ip=self.host_ip,
@@ -83,8 +85,7 @@ class AzbakanHTTPPost():
             path=path
         )
         response = self.session.post(request_url, headers=headers,
-                                     files=files, data=data)
-        print(response.text)
+                                     data=m)
         return response.text
 
 
