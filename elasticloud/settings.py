@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'elasticloud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
+        'HOST': '192.168.211.159',
         'NAME': 'elasticloud',
         'USER': 'root',
         'PASSWORD': 'root',
