@@ -70,6 +70,8 @@
                           <td><a href="http://{{ line.storage_ip }}:50070/" target="_blank">{{ line.storage_ip }}</a></td>
                           <td><span class="o">{{ line.job_stat }}</span></td>
                           <td>
+                              <a href="http://{{ line.computer_ip }}:8081/" target="_blank"><i class="fa fa-rocket blue fa-lg"> </i></a>
+                              <span> &#8203; &#8203; </span>
                               <a href="#" onclick="remove_execute_job('{{ line.id }}', '{{ line.job.job_name }}')"><i class="fa fa-trash-o red fa-lg"> </i></a>
                           </td>
                         </tr>

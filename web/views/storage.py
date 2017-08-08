@@ -1,4 +1,5 @@
 # coding:utf-8
+import json
 import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -31,11 +32,14 @@ def create_storage(kwargs):
     elif storage_type == 'HBASE':
         response = boot_strap.boot_storage_hbase_master(
                 user.username, master_memory)
-    result = response.json()
-    success = result['success']
-    if success:
-        record.append(result['data']['Id'])
-        namenode_ip = result['data']['IPAddress']
+    print('x' * 100)
+    print(response.json())
+    print('x' * 100)
+    result = json.loads(response.json())
+    status = result['status']
+    if status == 'success':
+        record.append(result['Id'])
+        namenode_ip = result['IPAddress']
         for i in range(1, cluster_size):
             if storage_type == 'HDFS':
                 response = boot_strap.boot_storage_hdfs_slave(
@@ -43,10 +47,10 @@ def create_storage(kwargs):
             elif storage_type == 'HBASE':
                 response = boot_strap.boot_storage_hbase_slave(
                         namenode_ip, slave_memory)
-            result = response.json()
-            success = result['success']
-            if success:
-                record.append(result['data']['Id'])
+            result = json.loads(response.json())
+            status = result['status']
+            if status == 'success':
+                record.append(result['Id'])
 
         for container_id in record:
             rec = Record(container_id=container_id,
@@ -118,6 +122,7 @@ def remove(request):
             master_ip = delete.get('master_ip')
             recs = Record.objects.filter(master_ip=master_ip)
             for rec in recs:
+                print(rec.container_id)
                 boot_strap.kill_container_by_id(rec.container_id)
                 rec.delete()
             storage = Storage.objects.filter(master_ip=master_ip)
@@ -126,5 +131,5 @@ def remove(request):
             return HttpResponse("true")
         except Exception as e:
             print(e)
-            logger.warning(e.message)
+            logger.warning(e)
             return HttpResponse("false")

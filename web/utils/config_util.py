@@ -12,4 +12,4 @@ def get_network_name():
 
 def get_docker_proxy_url():
     # return zk_util.get_data("/EC_ROOT/DOCKER_PROXY")
-    return "http://192.168.211.159:5000"
+    return "http://0.0.0.0:5000/api/docker"

@@ -1,6 +1,7 @@
 # coding:utf-8
 import logging
 import time
+import json
 import requests
 from django.conf import settings
 from web.utils.config_util import get_docker_proxy_url
@@ -30,7 +31,7 @@ def boot_storage_hdfs_master(USER_ID, memory):
         "network_name": get_network_name(),
         "environment": environment
     }
-    request_url = url + '/ws/containers/create'
+    request_url = url + '/containers/'
     return requests.post(request_url, json=payload)
 
 
@@ -46,7 +47,7 @@ def boot_storage_hdfs_slave(NAMENODE_IP, memory):
         "network_name": get_network_name(),
         "environment": environment
     }
-    request_url = url + '/ws/containers/create'
+    request_url = url + '/containers/'
     return requests.post(request_url, json=payload)
 
 
@@ -63,7 +64,7 @@ def boot_storage_hbase_master(USER_ID, memory):
         "network_name": get_network_name(),
         "environment": environment
     }
-    request_url = url + '/ws/containers/create'
+    request_url = url + '/containers/'
     return requests.post(request_url, json=payload)
 
 
@@ -80,7 +81,7 @@ def boot_storage_hbase_slave(USER_ID, memory):
         "network_name": get_network_name(),
         "environment": environment
     }
-    request_url = url + '/ws/containers/create'
+    request_url = url + '/containers/'
     return requests.post(request_url, json=payload)
 
 
@@ -97,7 +98,7 @@ def boot_storage_nosql_master(USER_ID, memory):
         "network_name": get_network_name(),
         "environment": environment
     }
-    return requests.post(url + "/ws/containers/create", json=payload)
+    return requests.post(url + "/containers/", json=payload)
 
 
 def boot_compute_yarn_master(NAMENODE_IP, USER_ID):
@@ -119,20 +120,17 @@ def boot_compute_yarn_master(NAMENODE_IP, USER_ID):
         "network_name": get_network_name(),
         "environment": environment
     }
-    request_url = url + '/ws/containers/create'
+    request_url = url + '/containers/'
     return requests.post(request_url, json=payload)
 
 
 def kill_container_by_id(container_id):
     try:
         url = get_docker_proxy_url()
-        payload = {
-            "id": container_id
-        }
-        request_url = url + '/ws/containers/kill'
-        requests.post(request_url, json=payload)
+        request_url = url + '/containers/{}'.format(container_id)
+        requests.delete(request_url)
     except Exception as e:
-        logger.warning(e.message)
+        logger.warning(e)
 
 
 def launch_job(job, storage, user_id):
@@ -179,11 +177,11 @@ def launch_job(job, storage, user_id):
 
 def launch_by_new(storage, user_id, az_port, job):
     result = boot_compute_yarn_master(storage.master_ip, user_id)
-    result = result.json()
-    success = result['success']
-    if success:
-        container_id = result['data']['Id']
-        ip = result['data']['IPAddress']
+    result = json.loads(result.json())
+    status = result['status']
+    if status == 'success':
+        container_id = result['Id']
+        ip = result['IPAddress']
         garbage = Compute.objects.filter(master_ip=ip)
         for container in garbage:
             container.delete()
