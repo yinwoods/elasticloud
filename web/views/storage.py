@@ -32,9 +32,6 @@ def create_storage(kwargs):
     elif storage_type == 'HBASE':
         response = boot_strap.boot_storage_hbase_master(
                 user.username, master_memory)
-    print('x' * 100)
-    print(response.json())
-    print('x' * 100)
     result = json.loads(response.json())
     status = result['status']
     if status == 'success':

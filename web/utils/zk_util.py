@@ -9,6 +9,7 @@ from web.utils.config_util import get_zk_hosts
 logging.basicConfig()
 zk = KazooClient(hosts=get_zk_hosts())
 zk.start()
+print(zk.get_children('/'))
 
 
 def init_schema(user_id):
@@ -18,8 +19,8 @@ def init_schema(user_id):
         zk.create("/EC_ROOT/" + user_id + "/COMPUTE")
         zk.create("/EC_ROOT/" + user_id + "/STORAGE")
         zk.create("/EC_ROOT/" + user_id + "/STORAGE/HDFS")
-    except Exception:
-        pass
+    except Exception as e:
+        logging.debug(e)
 
 
 def get_data(path):

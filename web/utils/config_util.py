@@ -1,4 +1,4 @@
-# from web.utils import zk_util
+from web.utils import zk_util
 from django.conf import settings
 
 
@@ -12,4 +12,4 @@ def get_network_name():
 
 def get_docker_proxy_url():
     # return zk_util.get_data("/EC_ROOT/DOCKER_PROXY")
-    return "http://0.0.0.0:5000/api/docker"
+    return "http://docker_proxy:5000/api/docker"
