@@ -70,9 +70,9 @@ def launch(request):
                 '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')
         if count == 0:
             return HttpResponse("No available Storage resource.")
-        hdfs_master_ip = zk_util.get_children(
+        hdfs_main_ip = zk_util.get_children(
                 '/EC_ROOT/' + request.user.username + '/STORAGE/HDFS')[0]
-        storage = Storage.objects.filter(master_ip=hdfs_master_ip)
+        storage = Storage.objects.filter(main_ip=hdfs_main_ip)
         job = Job.objects.get(id=int(job_id))
         success = launch_job(job, storage[0], request.user.username)
         return HttpResponse(success)

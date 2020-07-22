@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 # USER_ID = username
 
-def boot_storage_hdfs_master(USER_ID, memory):
+def boot_storage_hdfs_main(USER_ID, memory):
     url = get_docker_proxy_url()
-    image = "yinwoods/storage_hdfs_master:1.0"
+    image = "yinwoods/storage_hdfs_main:1.0"
     environment = {
         'ZK_HOSTS': get_zk_hosts(),
         'USER_ID': USER_ID
@@ -35,9 +35,9 @@ def boot_storage_hdfs_master(USER_ID, memory):
     return requests.post(request_url, json=payload)
 
 
-def boot_storage_hdfs_slave(NAMENODE_IP, memory):
+def boot_storage_hdfs_subordinate(NAMENODE_IP, memory):
     url = get_docker_proxy_url()
-    image = "yinwoods/storage_hdfs_slave:1.0"
+    image = "yinwoods/storage_hdfs_subordinate:1.0"
     environment = {
         "NAMENODE_IP": NAMENODE_IP,
     }
@@ -51,9 +51,9 @@ def boot_storage_hdfs_slave(NAMENODE_IP, memory):
     return requests.post(request_url, json=payload)
 
 
-def boot_storage_hbase_master(USER_ID, memory):
+def boot_storage_hbase_main(USER_ID, memory):
     url = get_docker_proxy_url()
-    image = "yinwoods/storage_hbase_master:1.0"
+    image = "yinwoods/storage_hbase_main:1.0"
     environment = {
         'ZK_HOSTS': get_zk_hosts(),
         'USER_ID': USER_ID
@@ -68,9 +68,9 @@ def boot_storage_hbase_master(USER_ID, memory):
     return requests.post(request_url, json=payload)
 
 
-def boot_storage_hbase_slave(USER_ID, memory):
+def boot_storage_hbase_subordinate(USER_ID, memory):
     url = get_docker_proxy_url()
-    image = "yinwoods/storage_hbase_slave:1.0"
+    image = "yinwoods/storage_hbase_subordinate:1.0"
     environment = {
         'ZK_HOSTS': get_zk_hosts(),
         'USER_ID': USER_ID
@@ -85,9 +85,9 @@ def boot_storage_hbase_slave(USER_ID, memory):
     return requests.post(request_url, json=payload)
 
 
-def boot_storage_nosql_master(USER_ID, memory):
+def boot_storage_nosql_main(USER_ID, memory):
     url = get_docker_proxy_url()
-    image = "yinwoods/storage_nosql_master:1.0"
+    image = "yinwoods/storage_nosql_main:1.0"
     environment = {
         'ZK_HOSTS': get_zk_hosts(),
         'USER_ID': USER_ID
@@ -101,9 +101,9 @@ def boot_storage_nosql_master(USER_ID, memory):
     return requests.post(url + "/containers/", json=payload)
 
 
-def boot_compute_yarn_master(NAMENODE_IP, USER_ID):
+def boot_compute_yarn_main(NAMENODE_IP, USER_ID):
     url = get_docker_proxy_url()
-    image = "yinwoods/compute_yarn_master:1.0"
+    image = "yinwoods/compute_yarn_main:1.0"
     environment = {
         "NAMENODE_IP": NAMENODE_IP,
         "DOCKER_PROXY_ADDRESS": url,
@@ -111,7 +111,7 @@ def boot_compute_yarn_master(NAMENODE_IP, USER_ID):
         "VIRTUAL_CORE": 1,
         "USER_ID": USER_ID,
         "ZK_HOSTS": get_zk_hosts(),
-        "YARN_SLAVE_IMAGE": "yinwoods/compute_yarn_slave:1.0",
+        "YARN_SLAVE_IMAGE": "yinwoods/compute_yarn_subordinate:1.0",
         "DOCKER_NETWORK": get_network_name()
     }
     payload = {
@@ -161,7 +161,7 @@ def launch_job(job, storage, user_id):
                 if az_result:
                     execute = Execute(user=job.user, job=job,
                                       computer_ip=min_cluster['ip'],
-                                      storage_ip=storage.master_ip,
+                                      storage_ip=storage.main_ip,
                                       execute_log='')
                     execute.save()
                     return 'Job has been submited successfully!'
@@ -176,17 +176,17 @@ def launch_job(job, storage, user_id):
 
 
 def launch_by_new(storage, user_id, az_port, job):
-    result = boot_compute_yarn_master(storage.master_ip, user_id)
+    result = boot_compute_yarn_main(storage.main_ip, user_id)
     result = json.loads(result.json())
     status = result['status']
     if status == 'success':
         container_id = result['Id']
         ip = result['IPAddress']
-        garbage = Compute.objects.filter(master_ip=ip)
+        garbage = Compute.objects.filter(main_ip=ip)
         for container in garbage:
             container.delete()
         compute = Compute(user=job.user, container_id=container_id,
-                          master_ip=ip, storage=storage)
+                          main_ip=ip, storage=storage)
         compute.save()
         # check service
         url = "http://" + ip + ":" + str(az_port)
@@ -205,7 +205,7 @@ def launch_by_new(storage, user_id, az_port, job):
             az_result = az_submit(ip, job)
             if az_result:
                 execute = Execute(user=job.user, job=job, computer_ip=ip,
-                                  storage_ip=storage.master_ip, execute_log='')
+                                  storage_ip=storage.main_ip, execute_log='')
                 execute.save()
                 return 'Job has been submited successfully!'
             else:
