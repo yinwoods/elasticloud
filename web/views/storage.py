@@ -19,19 +19,19 @@ def create_storage(kwargs):
 
     storage_type = kwargs.get('storage_type')
     user = kwargs.get('user')
-    master_memory = kwargs.get('master_memory')
+    main_memory = kwargs.get('main_memory')
     cluster_size = kwargs.get('cluster_size')
-    slave_memory = kwargs.get('slave_memory')
+    subordinate_memory = kwargs.get('subordinate_memory')
 
     record = []
     message = None
 
     if storage_type == 'HDFS':
-        response = boot_strap.boot_storage_hdfs_master(
-                user.username, master_memory)
+        response = boot_strap.boot_storage_hdfs_main(
+                user.username, main_memory)
     elif storage_type == 'HBASE':
-        response = boot_strap.boot_storage_hbase_master(
-                user.username, master_memory)
+        response = boot_strap.boot_storage_hbase_main(
+                user.username, main_memory)
     result = json.loads(response.json())
     status = result['status']
     if status == 'success':
@@ -39,11 +39,11 @@ def create_storage(kwargs):
         namenode_ip = result['IPAddress']
         for i in range(1, cluster_size):
             if storage_type == 'HDFS':
-                response = boot_strap.boot_storage_hdfs_slave(
-                        namenode_ip, slave_memory)
+                response = boot_strap.boot_storage_hdfs_subordinate(
+                        namenode_ip, subordinate_memory)
             elif storage_type == 'HBASE':
-                response = boot_strap.boot_storage_hbase_slave(
-                        namenode_ip, slave_memory)
+                response = boot_strap.boot_storage_hbase_subordinate(
+                        namenode_ip, subordinate_memory)
             result = json.loads(response.json())
             status = result['status']
             if status == 'success':
@@ -51,14 +51,14 @@ def create_storage(kwargs):
 
         for container_id in record:
             rec = Record(container_id=container_id,
-                         master_ip=namenode_ip)
+                         main_ip=namenode_ip)
             rec.save()
-        garbage = Storage.objects.filter(master_ip=namenode_ip)
+        garbage = Storage.objects.filter(main_ip=namenode_ip)
         for g in garbage:
             g.delete()
-        storage = Storage(user=user, master_ip=namenode_ip,
-                          master_memory=master_memory,
-                          slave_memory=slave_memory,
+        storage = Storage(user=user, main_ip=namenode_ip,
+                          main_memory=main_memory,
+                          subordinate_memory=subordinate_memory,
                           cluster_size=cluster_size,
                           storage_type=storage_type)
         storage.save()
@@ -79,13 +79,13 @@ def create(request):
         user = request.user
         storage_type = request.POST.get('type')
         cluster_size = int(request.POST.get('size'))
-        master_memory = request.POST.get('m_memory')
-        slave_memory = request.POST.get('s_memory')
+        main_memory = request.POST.get('m_memory')
+        subordinate_memory = request.POST.get('s_memory')
         params = {
             'user': user,
             'cluster_size': cluster_size,
-            'master_memory': master_memory,
-            'slave_memory': slave_memory,
+            'main_memory': main_memory,
+            'subordinate_memory': subordinate_memory,
             'storage_type': storage_type,
         }
         print(params)
@@ -104,8 +104,8 @@ def list(request):
     storage_ips += zk_util.get_children(
             '/EC_ROOT/' + request.user.username + '/STORAGE/HBASE')
 
-    for master_ip in storage_ips:
-        storage = Storage.objects.filter(master_ip=master_ip)
+    for main_ip in storage_ips:
+        storage = Storage.objects.filter(main_ip=main_ip)
         if storage:
             lines.append(storage[0])
     return render(request, 'storage_list.html', {'lines': lines})
@@ -116,13 +116,13 @@ def remove(request):
     if request.method == 'DELETE':
         try:
             delete = QueryDict(request.body)
-            master_ip = delete.get('master_ip')
-            recs = Record.objects.filter(master_ip=master_ip)
+            main_ip = delete.get('main_ip')
+            recs = Record.objects.filter(main_ip=main_ip)
             for rec in recs:
                 print(rec.container_id)
                 boot_strap.kill_container_by_id(rec.container_id)
                 rec.delete()
-            storage = Storage.objects.filter(master_ip=master_ip)
+            storage = Storage.objects.filter(main_ip=main_ip)
             for sto in storage:
                 sto.delete()
             return HttpResponse("true")
